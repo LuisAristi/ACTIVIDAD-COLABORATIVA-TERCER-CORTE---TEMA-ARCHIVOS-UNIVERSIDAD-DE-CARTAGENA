@@ -1,7 +1,3 @@
-#include "gestionViajes.h"
-#include "gestionAutomoviles.h"
-#include "consultarRutas.h"
-#include "consultasVehiculos.h"
 #include "premiosPromociones.h"
 
 void mostrarMenuPrincipal();

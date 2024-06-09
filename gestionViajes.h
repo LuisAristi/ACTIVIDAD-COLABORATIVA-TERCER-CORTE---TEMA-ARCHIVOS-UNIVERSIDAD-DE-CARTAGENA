@@ -1,6 +1,7 @@
 #include "includes.h"
 
 void registrarRutasTuristicas();
-void registrarViaje();
+int registrarViaje();
 void imprimirRecorridoPorCliente();
 void imprimirRecorridoFolleto();
+
