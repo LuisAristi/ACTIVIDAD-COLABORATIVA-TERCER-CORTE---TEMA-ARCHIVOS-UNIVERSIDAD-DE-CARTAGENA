@@ -1,6 +1,7 @@
 #include "includes.h"
 
-int registrarViaje();
+void registrarServicio();
+void registrarRutasTuristicas(struct ruta viajes[]);
 void imprimirRecorridoPorCliente();
 void imprimirRecorridoFolleto();
 
@@ -63,20 +64,20 @@ Lista de servicios diarios ofrecidos (hora y ruta), junto con la descripción de
 
 //menu de opciones, registrar ruta o registrar servicio
 
-void mostrarMenuRegistro() {
+void mostrarMenuRegistro(struct ruta viajes[]) {
     int opcion;
     
     do {
         std::cout << "Menu de Opciones\n";
         std::cout << "1. Registrar Ruta\n";
         std::cout << "2. Registrar Servicio\n";
-        std::cout << "3. Salir" << std::endl;
+        std::cout << "3. Salir\n";
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcion;
         
         switch(opcion) {
             case 1:
-                registrarRutasTuristicas();
+                registrarRutasTuristicas(viajes);
                 break;
             case 2:
                 registrarServicio();
@@ -91,7 +92,7 @@ void mostrarMenuRegistro() {
 }
 
 //llamar a 01-800-915-5704
-void registrarRutasTuristicas(){
+void registrarRutasTuristicas(struct ruta viajes[]){
     // Implementación de la función para registrar una ruta
     std::cout << "Registrando Ruta...\n";
     // Aquí va el código para registrar una ruta
@@ -99,22 +100,26 @@ void registrarRutasTuristicas(){
     // por ejemplo de tiempo y de numero -> las principales donde hay
     // error del usuario
     // me gustaria que las rutas turisticas tengan nombres y codigos diferentes
-    std::cout<<"ingrese nombre de la ruta\n";
-    std::cout<<"ingrese codigo de la ruta\n";
-    std::cout<<"ingrese lugar de origen de ruta\n";
-    std::cout<<"ingrese lugar de destino de ruta\n";
-    std::cout<<"ingrese costo de la ruta\n";
+    for(int i = 0; i < 20; i++){
+        std::cout<<"ingrese nombre de la ruta\n";
+        fgets(viajes[i].nombreDeRuta, 50, stdin); //aqui es cuando el cin.ignore salva el dia
+        std::cout<<"ingrese codigo de la ruta\n";
+        std::cout<<"ingrese lugar de origen de ruta\n";
+        std::cout<<"ingrese lugar de destino de ruta\n";
+        std::cout<<"ingrese costo de la ruta\n";
 
-    std::cout<<"desea ingresar lugares relevantes\n";
+        std::cout<<"desea ingresar lugares relevantes\n";
 
-    //sera que debo permitir modificacion?
-    std::cout<<"ingrese nombre del lugar\n";
-    std::cout<<"ingrese hora prevista de llegada \n";
-    std::cout<<"ingrese hora prevista de parada\n";
-    std::cout<<"ingrese actividad a realizar\n";
+        for(int j = 0; j<70; j++){
+            //sera que debo permitir modificacion?
+            std::cout<<"ingrese nombre del lugar\n";
+            std::cout<<"ingrese hora prevista de llegada \n";
+            std::cout<<"ingrese hora prevista de parada\n";
+            std::cout<<"ingrese actividad a realizar\n";
 
-    std::cout<<"quiere ingresar mas lugares?\n"; //se repite; i++
-
+            std::cout<<"quiere ingresar mas lugares?\n"; //se repite; i++
+        }
+    }
 }
 
 void registrarServicio(){
