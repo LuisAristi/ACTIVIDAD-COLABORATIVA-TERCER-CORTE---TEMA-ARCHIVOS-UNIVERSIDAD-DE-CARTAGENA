@@ -2,6 +2,14 @@
 
 void mostrarMenuPrincipal();
 
+struct servicios viajes{ //yolo un pequeno recordatorio
+    .codigoDeRuta = 123,
+    .codigoDeServicio = 34324,
+    .diasDeServicio = 1, 1, 1, 1, 1, 1, 1,
+    .salida = 12, 25,
+    .llegada = 13, 50
+};
+
 int main(){
     setlocale(LC_ALL, "spanish");
     int opcion;
@@ -22,6 +30,7 @@ int main(){
             switch (opcion) {
                 case 1:
                     std::cout<<"1";
+
                     //registrarRutasTuristicas();
                     break;
                 case 2:
