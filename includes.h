@@ -65,7 +65,7 @@ struct cliente{
 
 
 // funciones de validaciones
-long ingresarNumero(long numero){ //validar que es un numero
+long ingresarNumero(long numero){ //validar que es un numero y manejar errores
     malapraxi:
     std::cout<<"recuerde ingresar un numero\n";
     std::cin>>numero;
