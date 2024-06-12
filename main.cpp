@@ -5,7 +5,7 @@ int main(){
     int opcion;
     // inicializando de los structs gestion de viajes:
     struct ruta Rutas[30]; //habra que implementar un validador que 
-    struct servicios Servicio[90];  //no permita ingresar mas de [x]
+    struct servicios Servicio[90];  //no permita ingresar mas de [x] -> hecho
     struct cliente Cliente[1000]; //muchos clientes, pobre memoria ram
 
     //inicializacion de los structs del punto 2 TRABAJEN PA HOY
@@ -22,7 +22,9 @@ int main(){
                 mostrarMenuRegistro(Rutas);
                 break;
             case 2:
-                std::cout<<"2";
+                //std::cout<<"2";
+                std::cout<<Rutas[0].DecripcionLugares[0].previstoDeLlegada.hora<<"\n";
+                std::cout<<Rutas[0].DecripcionLugares[0].previstoDeLlegada.minuto<<"\n";
                 //registrarViaje();
                 break;
             case 3:

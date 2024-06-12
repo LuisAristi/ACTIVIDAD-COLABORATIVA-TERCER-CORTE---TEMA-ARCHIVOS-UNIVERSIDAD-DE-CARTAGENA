@@ -5,6 +5,20 @@
 #include <fstream>
 #include <limits>
 
+#ifdef _WIN32
+    #include <windows.h>
+#endif
+
+void clearScreen() {
+    #ifdef _WIN32
+        // Para Windows
+        system("cls");
+    #else
+        // Para Linux y otros sistemas UNIX
+        system("clear");
+    #endif
+}
+
 //prototipos porque el orden importa
 long ingresarNumero(long numero);
 void clear();
@@ -26,13 +40,7 @@ char actividad[100];
 
 //probando si esto funciona, creo que sera mejor usar un vector pero quiero ver si es viable asi
 struct semana{
-    bool lunes;
-    bool martes;
-    bool miercoles;
-    bool jueves; 
-    bool viernes;
-    bool sabado;
-    bool domingo;
+    bool dias[7];
 };
 
 // 1 ruta varios servicios que funcionan a diferentes horas, seria: tengo una ruta definida, le doy al cliente a elegir a que ruta quiere anadir un servicio
@@ -47,7 +55,7 @@ struct servicios{
 
 struct ruta{
     long codigoDeRuta;
-    float costoDeViaje;
+    long costoDeViaje;
     char nombreDeRuta[50];
     char lugarDeOrigen[50];
     char lugarDestino[50];
@@ -65,9 +73,10 @@ struct cliente{
 
 
 // funciones de validaciones
+// numeros LONG
 long ingresarNumero(long numero){ //validar que es un numero y manejar errores
     malapraxi:
-    std::cout<<"recuerde ingresar un numero\n";
+    std::cout<<"<<<recuerde ingresar un numero>>>\n";
     std::cin>>numero;
     if(std::cin.fail()){
         std::cin.clear();
@@ -80,8 +89,53 @@ long ingresarNumero(long numero){ //validar que es un numero y manejar errores
     return numero;
 }
 
+// mi objetvo es hacer una funcion que me acepte el struct viajes y pueda poner valores de tiempo
+// como? ni idea :D, no puede ser de tipo int, si es void funciona con punteros? -> a probar
+void ingresarTiempo(struct tiempo &Tiempo){ 
+    perdon:
+    std::cout<<"ingrese hora 0 - 23\n";
+    Tiempo.hora = ingresarNumero(Tiempo.hora);
+    clear();
+    if(Tiempo.hora < 0 || Tiempo.hora > 23) goto perdon; // no quiero reventarme la cabeza con un bucle
+
+    perdon2:
+    std::cout << "ingrese minuto 0 - 60\n";
+    Tiempo.minuto = ingresarNumero(Tiempo.minuto);
+    clear();
+    if(Tiempo.minuto < 0 || Tiempo.minuto > 60) goto perdon2;
+}
+
+
 // funciones utilitarias
 void clear(){
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
+void dias(int indice){ //esta funcion mostrara los dias de un array de 0 a 7
+    switch (indice)
+    {
+    case 0:
+        std::cout<<"lunes\n";
+        break;
+    case 1:
+        std::cout<<"martes\n";
+        break;
+    case 2:
+        std::cout<<"miercoles\n";
+        break;
+    case 3:
+        std::cout<<"jueves\n";
+        break;
+    case 4:
+        std::cout<<"viernes\n";
+        break;
+    case 5:
+        std::cout<<"sabado\n";
+        break;
+    case 6:
+        std::cout<<"domingo\n";
+        break;
+    default:
+        break;
+    }
+}
