@@ -1,13 +1,13 @@
 #include "includes.h"
 
-void registrarServicio(struct servicios Servicios[]);
+void registrarServicio(struct servicios Servicios[], struct ruta Ruta[]);
 void registrarRutasTuristicas(struct ruta Ruta[]);
 void registrarViaje(); // NI IDEA
 void imprimirRecorridoPorCliente();
 void imprimirRecorridoFolleto();
 
 //menu de opciones, registrar ruta o registrar servicio
-void mostrarMenuRegistro(struct ruta Ruta[]) {
+void mostrarMenuRegistro(struct ruta Ruta[], struct servicios Servicios[]) {
     int opcion;
     do {
         std::cout << "Menu de Opciones\n";
@@ -22,7 +22,7 @@ void mostrarMenuRegistro(struct ruta Ruta[]) {
                 registrarRutasTuristicas(Ruta);
                 break;
             case 2:
-                //registrarServicio();
+                registrarServicio(Servicios, Ruta);
                 break;
             case 3:
                 std::cout << "Saliendo del programa.\n";
@@ -87,8 +87,7 @@ void registrarRutasTuristicas(struct ruta Ruta[]){
             std::cout<<"quiere ingresar mas lugares?\n"; //se repite; i++
             std::cout<<"1. si\n";
             std::cout<<"2. no\n";
-            clear();
-            std::cin>>opcion;
+            ingresarNumero(opcion);
             if(opcion = 2) break; // no tengo creatividad
             clearScreen();
         }
@@ -126,6 +125,7 @@ void registrarServicio(struct servicios Servicios[], struct ruta Ruta[]){ //hay 
     long codigoDeRuta; int opcionDia; int i = 0;
     std::cout << "Registrando Servicio...\n";
     // Aquí va el código para registrar un servicio
+    estoycansado:
     std::cout<<"ingrese codigo de la ruta a la que quiere agregar un nuevo servicio";
     codigoDeRuta = ingresarNumero(codigoDeRuta); //quiero saber si la ruta existe
     
@@ -147,9 +147,9 @@ void registrarServicio(struct servicios Servicios[], struct ruta Ruta[]){ //hay 
                 std::cout<<"ingrese dias de servicio\n";
                 for(int j=0; j<7; j++){
                     perdonotravez:
-                    std::cout<<"desea anadir el dia";
-                    dias(j); std::cout<<"recuerde ingresar un valor valido :D";
-                    std::cout<<"1. \nsi\n";
+                    std::cout<<"desea anadir el dia ";
+                    dias(j); std::cout<<" --recuerde ingresar un valor valido :D";
+                    std::cout<<"\n1. si\n";
                     std::cout<<"2. no\n";
                     opcionDia = ingresarNumero(opcionDia);
                     if(opcionDia > 2 || opcionDia < 1) goto perdonotravez;
@@ -160,15 +160,34 @@ void registrarServicio(struct servicios Servicios[], struct ruta Ruta[]){ //hay 
 
                 std::cout<<"ingrese tiempo de llegada\n";
                 ingresarTiempo(Servicios[h].llegada);
+
+                std::cout<<"quiere seguir ingresando mas servicios?\n";
+                std::cout<<"1. si\n";
+                std::cout<<"2. no\n";
+                opcionDia = ingresarNumero(opcionDia);
+                if(opcionDia == 2){ break;}
             }
         }
+        else{ std::cout<<"ingrese un codigo de ruta que exista Bv   "; goto estoycansado; }
+        
+        std::cout<<"quiere seguir ingresando mas servicios?\n";
+        std::cout<<"1. si\n";
+        std::cout<<"2. no\n";
+        opcionDia = ingresarNumero(opcionDia);
+        if(opcionDia == 2) break;
     }
 }
 
-//devolvere un char con codigo1 primero y codigo2 despues
-char* generarCodigoTiquete(int codigo1, int codigo){ 
-    //ni idea
-    
+//devolvere un char con codigo1 primero y codigo2 despues idCliente-codigoservicio
+void generarCodigoTiquete(char codigoTiquete[128], long idCliente, long codigoServicio){ 
+    char codigo1[64];
+    char codigo2[64];
+    snprintf(codigo1, sizeof(codigo1), "%ld", idCliente);
+    snprintf(codigo2, sizeof(codigo2), "%ld", codigoServicio);
+    // Append the string representation of the long to the char array
+    strcat(codigoTiquete, codigo1);
+    strcat(codigoTiquete, "-");
+    strcat(codigoTiquete, codigo2);
 }
 
 /*Registrar Viaje (Debe imprimir tiquete de viaje donde figuran el código del tiquete, ID del
@@ -188,47 +207,56 @@ Hora de llegada prevista
 */
 
 
-void registrarViaje(struct cliente Cliente[], struct ruta Ruta) {
+void registrarViaje(struct cliente Cliente[], struct ruta Ruta[], struct servicios Servicio[]) {
     clearScreen();
+    static int i;
+    long codigoServicio;
+    int valorIndiceServicio;
+    int valorRuta;
 
-    std::string clientId;
-    char clientName;
-    std::string routeName;
-    std::string departureTime;
-    int routeValue;
-    int travelDuration;
 
     for(int i = 0; i < 1000; i++){
         std::cout << "Ingrese el ID del cliente: ";
-        ingresarNumero(Cliente[i].idCliente);
-        //ingresar numero
+        Cliente[i].idCliente = ingresarNumero(Cliente[i].idCliente);
 
         std::cout << "Ingrese el nombre del cliente: ";
+        clear();
         std::cin.getline(Cliente[i].nombreCliente, 50);
 
-        std::cout << "Ingrese el nombre de la ruta: ";
-        std::getline(std::cin, routeName);
+        notengocreatividad:
+        std::cout << "Ingrese el codigo del servicio: "; //de esto sacare muchas cosas, costo, nombre ruta, salida, llegada
+        codigoServicio = ingresarNumero(codigoServicio);
+        for(int i = 0; i<90; i++){
+            if (codigoServicio == Servicio[i].codigoDeServicio) valorIndiceServicio = i; break; 
+        }
 
-        std::cout << "Ingrese la fecha y hora de salida (YYYY-MM-DD HH:MM:SS): ";
-        std::getline(std::cin, departureTime);
+        valorRuta = enlaceServicioRuta(Ruta, Servicio[i].codigoDeRuta); 
+        if(valorRuta == 404) goto notengocreatividad;
 
-        std::cout << "Ingrese el valor de la ruta: ";
-        std::cin >> routeValue;
+        generarCodigoTiquete(Cliente[i].codigoDeTiquete, Cliente[i].idCliente, Servicio[valorIndiceServicio].codigoDeServicio); 
 
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        //std::tm departure = parseDateTime(departureTime);
-        //std::string arrivalTime = calculateArrivalTime(departure, travelDuration);
-
-        clearScreen();
-    }
-
-    std::cout << "===== Tiquete de Viaje =====" << std::endl;
-    //std::cout << "Código del tiquete: " << ticketCode << std::endl;
-    std::cout << "ID del cliente: " << clientId << std::endl;
-    std::cout << "Nombre del cliente: " << clientName << std::endl;
-    std::cout << "Nombre de la ruta: " << routeName << std::endl;
-    std::cout << "Fecha y hora de salida: " << departureTime << std::endl;
-    std::cout << "Valor: " << routeValue << std::endl;
-    std::cout << "============================" << std::endl;
+        std::cout << "===== Tiquete de Viaje =====" << std::endl;
+        //std::cout << "Código del tiquete: " << ticketCode << std::endl;
+        std::cout << "Codigo del tiquete: " << Cliente[i].codigoDeTiquete << std::endl;
+        std::cout << "ID del cliente: " << Cliente[i].idCliente << std::endl;
+        std::cout << "Nombre del cliente: " << Cliente[i].nombreCliente << std::endl;
+        std::cout << "Nombre de la ruta: " << Ruta[valorRuta].nombreDeRuta << std::endl;
+        std::cout << "hora de salida: " << Servicio[valorIndiceServicio].salida.hora <<":"<<Servicio[valorIndiceServicio].salida.minuto;
+        std::cout << "\nhora de llegada: " << Servicio[valorIndiceServicio].llegada.hora <<":"<<Servicio[valorIndiceServicio].llegada.minuto;
+        std::cout << "\nValor de viaje: " << Ruta[valorRuta].costoDeViaje;
+        std::cout << "\n============================" << std::endl;
+    } //quiere seguir ingresando clientes?
 }
+
+/*
+requiero 
+Imprimir Recorrido del viaje
+1.3.1
+Por Cliente (mostrar por orden cronológico, los lugares más relevantes del
+recorrido. La descripción consiste en el nombre del lugar, la hora prevista de llegada (el
+tiempo entre dos lugares concretos es fijo para cada ruta) y además, en algunos casos, la
+actividad a realizar (comida, visita, etc.) y el tiempo de parada previsto.)
+1.3.2
+Folleto (lista de servicios diarios ofertados (hora y ruta), junto con la descripción
+de los días en que están programados.)
+*/
