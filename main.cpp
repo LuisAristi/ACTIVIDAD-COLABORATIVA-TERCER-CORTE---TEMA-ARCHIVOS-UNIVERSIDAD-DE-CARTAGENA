@@ -8,7 +8,6 @@ int main(){
     struct servicios Servicio[90];  //no permita ingresar mas de [x] -> hecho
     struct cliente Cliente[1000]; //muchos clientes, pobre memoria ram
 
-    //inicializacion de los structs del punto 2 TRABAJEN PA HOY
     //inicializacion de los structs del punto 3 TRABAJEN PA HOY
     //inicializacion de los structs del punto 4 TRABAJEN PA HOY
     //inicializacion de los structs del punto 5 TRABAJEN PA HOY
@@ -18,14 +17,11 @@ int main(){
         opcion = ingresarNumero(opcion);
         switch (opcion) {
             case 1:
-                std::cout<<"1";
-                mostrarMenuRegistro(Rutas);
+                mostrarMenuRegistro(Rutas, Servicio);
+                std::cout<<Servicio[0].codigoDeRuta; 
                 break;
             case 2:
-                //std::cout<<"2";
-                std::cout<<Rutas[0].DecripcionLugares[0].previstoDeLlegada.hora<<"\n";
-                std::cout<<Rutas[0].DecripcionLugares[0].previstoDeLlegada.minuto<<"\n";
-                //registrarViaje();
+                registrarViaje(Cliente, Rutas, Servicio);
                 break;
             case 3:
                 std::cout<<"3";
