@@ -4,6 +4,7 @@
 #include <locale.h>
 #include <fstream>
 #include <limits>
+#include <cstring>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -63,10 +64,10 @@ struct ruta{
 };  
 
 struct cliente{
-	long idCliente;
+	long idCliente; 
     long idDeRuta;
-    long codigoDeTiquete;
-    long codigoDeServicio;
+    char codigoDeTiquete[128]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
+    long codigoDeServicio; //de resto todo es long
 	char nombreCliente[50];
 	long telefonoCliente;
 };
@@ -105,6 +106,12 @@ void ingresarTiempo(struct tiempo &Tiempo){
     if(Tiempo.minuto < 0 || Tiempo.minuto > 60) goto perdon2;
 }
 
+int enlaceServicioRuta(struct ruta Ruta[], long codigoServicio){
+    for(int i = 0; i<30; i++){
+        if(codigoServicio == Ruta[i].codigoDeRuta) return i;
+    }
+    return 404;
+}
 
 // funciones utilitarias
 void clear(){
