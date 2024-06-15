@@ -26,15 +26,16 @@ void clear();
 
 
 //declarar structs que se usaran en todo el proyecto aqui
-//struct de rutas || ESTO VA PA LARGO DE 9 a 
+//struct de tiempo que permitira no partirse el cerebro con las horas
 struct tiempo{
     int hora;
     int minuto;
 };
 
+// quiero mostrar toda la informacion sobre los sitios de interes 
 struct lugares{
 char nombreLugar[100]; 
-tiempo previstoDeLlegada; // quiero mostrar toda la informacion sobre los sitios de interes 
+tiempo previstoDeLlegada;
 tiempo previstoDeParada;
 char actividad[100];
 };
@@ -45,11 +46,16 @@ struct semana{
 };
 
 // 1 ruta varios servicios que funcionan a diferentes horas, seria: tengo una ruta definida, le doy al cliente a elegir a que ruta quiere anadir un servicio
+
 // asi que el struct servicio es diferente a rutas, necesito enlazarlos con codigoDeRuta
+// quiero tener el mismo codigo aunque sean diferentes servicios (no tengo claro como organizar esto)
+// 1 ruta puede tener varios servicios, por lo que el cambio seria de horarios duh
+// el codigo de ruta ayudara a mostrar la informacion de la ruta :)
+
 struct servicios{
-    long codigoDeRuta; // quiero tener el mismo codigo aunque sean diferentes servicios (no tengo claro como organizar esto) 
-    long codigoDeServicio; // 1 ruta puede tener varios servicios, por lo que el cambio seria de horarios duh
-    semana diasDeServicio;             // el codigo de ruta ayudara a mostrar la informacion de la ruta :) 
+    long codigoDeRuta; 
+    long codigoDeServicio; 
+    semana diasDeServicio;              
     tiempo salida;
     tiempo llegada;
 };
@@ -63,11 +69,14 @@ struct ruta{
     lugares DecripcionLugares[70];
 };  
 
+struct tiquete{
+    char codigoDeTiquete[128];
+};
+
 struct cliente{
 	long idCliente; 
-    long idDeRuta;
-    char codigoDeTiquete[128]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
-    long codigoDeServicio; //de resto todo es long
+    tiquete Tiquete[100]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
+    long codigoDeServicio[100]; // si tengo 100 codigos de servicios, 100 registros de viaje pal cliente
 	char nombreCliente[50];
 	long telefonoCliente;
 };
@@ -110,7 +119,24 @@ int enlaceServicioRuta(struct ruta Ruta[], long codigoServicio){
     for(int i = 0; i<30; i++){
         if(codigoServicio == Ruta[i].codigoDeRuta) return i;
     }
-    return 404;
+    return -1;
+}
+
+/*
+struct cliente{
+	long idCliente; 
+    char codigoDeTiquete[128]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
+    long codigoDeServicio[100]; // si tengo 100 codigos de servicios, 100 registros de viaje pal cliente
+	char nombreCliente[50];
+	long telefonoCliente;
+};
+*/
+
+int enlaceCodigoCliente(struct cliente Cliente[], long codigoCliente){
+    for(int i=0; i<1000; i++){  
+        if(Cliente[i].idCliente == codigoCliente) return i;
+    }
+    return -1;
 }
 
 // funciones utilitarias
@@ -145,4 +171,8 @@ void dias(int indice){ //esta funcion mostrara los dias de un array de 0 a 7
     default:
         break;
     }
+}
+
+void mostrarTiempo(struct tiempo& Tiempo) {
+    std::cout << Tiempo.hora << ":" << (Tiempo.minuto < 10 ? "0" : "") << Tiempo.minuto;
 }
