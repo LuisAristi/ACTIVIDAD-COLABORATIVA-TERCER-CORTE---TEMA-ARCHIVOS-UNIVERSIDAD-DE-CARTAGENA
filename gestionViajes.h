@@ -222,7 +222,7 @@ void registrarViaje(struct cliente Cliente[], struct ruta Ruta[], struct servici
     int valorRuta;
 
 
-    for(int i = 0; i < 1000; i++){
+    for(int i = 0; i < 500; i++){
         std::cout << "Ingrese el ID del cliente: ";
         Cliente[i].idCliente = ingresarNumero(Cliente[i].idCliente);
 
@@ -238,13 +238,16 @@ void registrarViaje(struct cliente Cliente[], struct ruta Ruta[], struct servici
         }
 
         valorRuta = enlaceServicioRuta(Ruta, Servicio[i].codigoDeRuta); 
-        if(valorRuta == 404) goto notengocreatividad; //ahora es bipolar
-
-        generarCodigoTiquete(Cliente[i].codigoDeTiquete, Cliente[i].idCliente, Servicio[valorIndiceServicio].codigoDeServicio); 
+        if(valorRuta == -1) goto notengocreatividad; //ahora es bipolar
+        
+        for(int j=0; j<100; j++){ //esto seria con archivos binarios -> pendiente
+            //hay que solucionar el problema de codigoTiquete
+            generarCodigoTiquete(Cliente[i].Tiquete[i].codigoDeTiquete, Cliente[i].idCliente, Servicio[valorIndiceServicio].codigoDeServicio); 
+        }
 
         std::cout << "===== Tiquete de Viaje =====" << std::endl;
         //std::cout << "Código del tiquete: " << ticketCode << std::endl;
-        std::cout << "Codigo del tiquete: " << Cliente[i].codigoDeTiquete << std::endl;
+        std::cout << "Codigo del tiquete: " << Cliente[i].Tiquete[i].codigoDeTiquete << std::endl;
         std::cout << "ID del cliente: " << Cliente[i].idCliente << std::endl;
         std::cout << "Nombre del cliente: " << Cliente[i].nombreCliente << std::endl;
         std::cout << "Nombre de la ruta: " << Ruta[valorRuta].nombreDeRuta << std::endl;
@@ -277,17 +280,103 @@ Folleto (lista de servicios diarios ofertados (hora y ruta), junto con la descri
 de los días en que están programados.)
 */
 
-void imprimirRecorrido(struct ruta Ruta[], struct servicios Servicio[]) {
-    int i;
+/*
+struct cliente{
+	long idCliente; 
+    char codigoDeTiquete[128]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
+    long codigoDeServicio[100]; // si tengo 100 codigos de servicios, 100 registros de viaje pal cliente
+	char nombreCliente[50];
+	long telefonoCliente;
+};
+*/
+
+void imprimirRecorrido(struct ruta Ruta[], struct servicios Servicio[], struct cliente Cliente[]) {
+    long idTemporal;
+    int prueba;
+    int indiceCliente;
+    int rutaInfo;
 
     //ingrese id cliente
-    //buscar id y acceder a la info
-    //buscar codigo de ruta
+    std::cout<<"ingrese id del cliente";  
+    ingresarNumero(idTemporal);
+    //buscar cliente
+    indiceCliente = enlaceCodigoCliente(Cliente, idTemporal);
+    
+    //tengo el indice para acceder a la info del cliente, necesito saber que ruta quiere mostrar -> hecho
+    //para eso necesito mostrar todos los servicios y de esos servicios mostrar los nombres de rutas -> hecho
+    //con sus respectivos indices, de modo que el usuario seleccionara el indice de ruta que quiere mostrar -> prendiente
 
-    std::cout << "Recorrido del viaje\n";
-    std::cout << "Hora de inicio del viaje: "<< Servicio[i].salida.hora <<":"<< Servicio[i].salida.minuto<<"\n\n";
+    std::cout<<"estas son las rutas encontradas\n\n";
 
-    for (int i = 0; i<90; i++) {
-        
+    for(int i=0; i<100; i++){
+        if(Cliente[indiceCliente].codigoDeServicio[i] != 0){
+            prueba = enlaceServicioRuta(Ruta, Cliente[indiceCliente].codigoDeServicio[i]);
+
+            if(prueba>=0 || prueba<100){
+                std::cout<<prueba<<". ";
+                std::cout<<Ruta[prueba].nombreDeRuta;
+            }
+        }
+        else break; //favor no permitir al usuario ingresar codigo de ruta = 0 -> pendiente
+    }
+    entradaMala:
+    std::cout<<"seleccione que ruta quiere mostrar: ";
+    rutaInfo =ingresarNumero(rutaInfo);
+    if(rutaInfo < 0 || rutaInfo > prueba){std::cout<<"ingrese un indice correcto\n\n"; goto entradaMala;}
+
+    /*
+    struct lugares{
+    char nombreLugar[100]; 
+    tiempo previstoDeLlegada; // quiero mostrar toda la informacion sobre los sitios de interes 
+    tiempo previstoDeParada;
+    char actividad[100];
+    };
+    */
+
+    for(int i=0; i<70; i++){
+        if(Ruta[rutaInfo].DecripcionLugares[i].nombreLugar != '\0'){
+            std::cout<<"nombre de lugar: ";
+            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].nombreLugar;
+            std::cout<<"\n\ntiempo previsto de llegada: ";
+            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeLlegada.hora<<":";
+            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeLlegada.minuto;
+            std::cout<<"\n\ntiempo previsto de parada: ";
+            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeParada.hora<<":";
+            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeParada.minuto;
+            std::cout<<"\n\nactividad a realizar: \n";
+            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].actividad;
+        }
+        else break; //pues no habra info escrita en lo que sigue del array
+    }
+}
+
+/*
+1.3.2
+Folleto (lista de servicios diarios ofertados (hora y ruta), junto con la descripción
+de los días en que están programados.)
+*/
+
+// Función para imprimir la estructura servicios
+void mostrarServicios(struct servicios Servicio[]) {
+    for(int i=0; i<90; i++){
+        if(Servicio[i].codigoDeRuta != 0){
+            std::cout << "Código de Ruta: " << Servicio[i].codigoDeRuta << std::endl;
+            std::cout << "Código de Servicio: " << Servicio[i].codigoDeServicio << std::endl;
+            std::cout << "Días de Servicio: ";
+            for (int j = 0; j < 7; ++j) {
+                if (Servicio[i].diasDeServicio.dias[j]) {
+                    dias(i);
+                    std::cout<<", ";
+                }
+            }
+            std::cout << std::endl;
+            std::cout << "Hora de Salida: ";
+            mostrarTiempo(Servicio[i].salida);
+            std::cout << std::endl;
+            std::cout << "Hora de Llegada: ";
+            mostrarTiempo(Servicio[i].llegada);
+            std::cout <<"\n\n\n\n";
+        }
+        else break; //todo lo que queda esta vacio
     }
 }
