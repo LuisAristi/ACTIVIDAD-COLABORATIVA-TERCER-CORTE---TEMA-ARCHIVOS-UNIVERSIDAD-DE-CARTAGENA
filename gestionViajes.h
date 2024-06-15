@@ -88,15 +88,17 @@ void registrarRutasTuristicas(struct ruta Ruta[]){
             std::cout<<"1. si\n";
             std::cout<<"2. no\n";
             ingresarNumero(opcion);
+            
             if(opcion = 2) break; // no tengo creatividad
             clearScreen();
         }
         //quiere continuar?
+        quieres:
         std::cout<<"quiere ingresar mas rutas?\n"; //se repite; i++
         std::cout<<"1. si\n";
         std::cout<<"2. no\n";
-        clear();
-        std::cin>>opcion;
+        ingresarNumero(opcion);
+        if(opcion > 2 || opcion < 1) goto quieres;
         if(opcion = 2) break; // no tengo creatividad
     }
 }
@@ -161,19 +163,23 @@ void registrarServicio(struct servicios Servicios[], struct ruta Ruta[]){ //hay 
                 std::cout<<"ingrese tiempo de llegada\n";
                 ingresarTiempo(Servicios[h].llegada);
 
+                bueno:
                 std::cout<<"quiere seguir ingresando mas servicios?\n";
                 std::cout<<"1. si\n";
                 std::cout<<"2. no\n";
                 opcionDia = ingresarNumero(opcionDia);
+                if(opcionDia > 2 || opcionDia < 1) goto bueno;
                 if(opcionDia == 2){ break;}
             }
         }
         else{ std::cout<<"ingrese un codigo de ruta que exista Bv   "; goto estoycansado; }
         
+        efectivo:
         std::cout<<"quiere seguir ingresando mas servicios?\n";
         std::cout<<"1. si\n";
         std::cout<<"2. no\n";
         opcionDia = ingresarNumero(opcionDia);
+        if(opcionDia > 2 || opcionDia < 1) goto efectivo;
         if(opcionDia == 2) break;
     }
 }
@@ -184,7 +190,7 @@ void generarCodigoTiquete(char codigoTiquete[128], long idCliente, long codigoSe
     char codigo2[64];
     snprintf(codigo1, sizeof(codigo1), "%ld", idCliente);
     snprintf(codigo2, sizeof(codigo2), "%ld", codigoServicio);
-    // Append the string representation of the long to the char array
+    // convertir y triunfar
     strcat(codigoTiquete, codigo1);
     strcat(codigoTiquete, "-");
     strcat(codigoTiquete, codigo2);
@@ -210,6 +216,7 @@ Hora de llegada prevista
 void registrarViaje(struct cliente Cliente[], struct ruta Ruta[], struct servicios Servicio[]) {
     clearScreen();
     static int i;
+    int opcion;
     long codigoServicio;
     int valorIndiceServicio;
     int valorRuta;
@@ -231,7 +238,7 @@ void registrarViaje(struct cliente Cliente[], struct ruta Ruta[], struct servici
         }
 
         valorRuta = enlaceServicioRuta(Ruta, Servicio[i].codigoDeRuta); 
-        if(valorRuta == 404) goto notengocreatividad;
+        if(valorRuta == 404) goto notengocreatividad; //ahora es bipolar
 
         generarCodigoTiquete(Cliente[i].codigoDeTiquete, Cliente[i].idCliente, Servicio[valorIndiceServicio].codigoDeServicio); 
 
@@ -245,6 +252,15 @@ void registrarViaje(struct cliente Cliente[], struct ruta Ruta[], struct servici
         std::cout << "\nhora de llegada: " << Servicio[valorIndiceServicio].llegada.hora <<":"<<Servicio[valorIndiceServicio].llegada.minuto;
         std::cout << "\nValor de viaje: " << Ruta[valorRuta].costoDeViaje;
         std::cout << "\n============================" << std::endl;
+        
+        pregunta:
+        std::cout<<"quiere seguir ingresando mas servicios?\n";
+        std::cout<<"1. si\n";
+        std::cout<<"2. no\n";
+        opcion = ingresarNumero(opcion);
+        if(opcion > 2 || opcion < 1) goto pregunta;
+        if(opcion == 2) break;
+
     } //quiere seguir ingresando clientes?
 }
 
@@ -260,3 +276,18 @@ actividad a realizar (comida, visita, etc.) y el tiempo de parada previsto.)
 Folleto (lista de servicios diarios ofertados (hora y ruta), junto con la descripción
 de los días en que están programados.)
 */
+
+void imprimirRecorrido(struct ruta Ruta[], struct servicios Servicio[]) {
+    int i;
+
+    //ingrese id cliente
+    //buscar id y acceder a la info
+    //buscar codigo de ruta
+
+    std::cout << "Recorrido del viaje\n";
+    std::cout << "Hora de inicio del viaje: "<< Servicio[i].salida.hora <<":"<< Servicio[i].salida.minuto<<"\n\n";
+
+    for (int i = 0; i<90; i++) {
+        
+    }
+}
