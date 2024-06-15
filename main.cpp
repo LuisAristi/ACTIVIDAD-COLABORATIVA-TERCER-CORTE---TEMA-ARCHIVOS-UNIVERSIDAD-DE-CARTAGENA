@@ -4,9 +4,9 @@ int main(){
     setlocale(LC_ALL, "spanish");
     int opcion;
     // inicializando de los structs gestion de viajes:
-    struct ruta Rutas[30]; //habra que implementar un validador que 
-    struct servicios Servicio[90];  //no permita ingresar mas de [x] -> hecho
-    struct cliente Cliente[1000]; //muchos clientes, pobre memoria ram
+    struct ruta Rutas[30] = {0}; //habra que implementar un validador que 
+    struct servicios Servicio[90] = {0};  //que no permita ingresar mas de [x] -> hecho
+    struct cliente Cliente[500] = {0}; //muchos clientes, pobre memoria ram // mientras tanto los archivos binarios :)
 
     //inicializacion de los structs del punto 3 TRABAJEN PA HOY
     //inicializacion de los structs del punto 4 TRABAJEN PA HOY
@@ -17,8 +17,7 @@ int main(){
         opcion = ingresarNumero(opcion);
         switch (opcion) {
             case 1:
-                mostrarMenuRegistro(Rutas, Servicio);
-                std::cout<<Servicio[0].codigoDeRuta; 
+                mostrarMenuRegistro(Rutas, Servicio); 
                 break;
             case 2:
                 registrarViaje(Cliente, Rutas, Servicio);
