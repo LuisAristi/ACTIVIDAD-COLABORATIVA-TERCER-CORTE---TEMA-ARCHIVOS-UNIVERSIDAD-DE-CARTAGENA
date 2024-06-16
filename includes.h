@@ -37,7 +37,7 @@ struct lugares{
 char nombreLugar[100]; 
 tiempo previstoDeLlegada;
 tiempo previstoDeParada;
-char actividad[100];
+char actividad[200];
 };
 
 //probando si esto funciona, creo que sera mejor usar un vector pero quiero ver si es viable asi
@@ -69,18 +69,17 @@ struct ruta{
     lugares DecripcionLugares[70];
 };  
 
-struct tiquete{
+struct viajes{
+    long idCliente;
     char codigoDeTiquete[128];
+    long codigoDeServicio;
 };
 
 struct cliente{
 	long idCliente; 
-    tiquete Tiquete[100]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
-    long codigoDeServicio[100]; // si tengo 100 codigos de servicios, 100 registros de viaje pal cliente
-	char nombreCliente[50];
-	long telefonoCliente;
+    long telefonoCliente;
+	char nombreCliente[50];	
 };
-
 
 // funciones de validaciones
 // numeros LONG
@@ -122,22 +121,83 @@ int enlaceServicioRuta(struct ruta Ruta[], long codigoServicio){
     return -1;
 }
 
-/*
-struct cliente{
-	long idCliente; 
-    char codigoDeTiquete[128]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
-    long codigoDeServicio[100]; // si tengo 100 codigos de servicios, 100 registros de viaje pal cliente
-	char nombreCliente[50];
-	long telefonoCliente;
-};
-*/
-
 int enlaceCodigoCliente(struct cliente Cliente[], long codigoCliente){
     for(int i=0; i<1000; i++){  
         if(Cliente[i].idCliente == codigoCliente) return i;
     }
     return -1;
 }
+
+bool nombreRutaComparar(char nombreRuta[], long codigoDeRuta){
+	struct ruta Ruta;
+	std::ifstream ruta("datosruta.bin", std::ios::in | std::ios::binary);
+	ruta.read(reinterpret_cast <char*> (&Ruta), sizeof(ruta));
+	
+	while (!ruta.eof()){
+	    if (strcasecmp(nombreRuta, Ruta.nombreDeRuta)==0 
+                    || codigoDeRuta == Ruta.codigoDeRuta){
+	    	ruta.close();
+	    	return true;
+	    }
+	    ruta.read(reinterpret_cast <char*> (&Ruta), sizeof(ruta));	
+	}
+	ruta.close();
+	return false;
+}
+
+bool compararRutaCodigo(long codigoDeRuta){
+	struct ruta Ruta;
+	std::ifstream ruta("datosruta.bin", std::ios::in | std::ios::binary);
+	ruta.read(reinterpret_cast <char*> (&Ruta), sizeof(ruta));
+	
+	while (!ruta.eof()){
+	    if (codigoDeRuta == Ruta.codigoDeRuta){
+	    	ruta.close();
+	    	return true;
+	    }
+	    ruta.read(reinterpret_cast <char*> (&Ruta), sizeof(ruta));	
+	}
+	ruta.close();
+	return false;
+}
+
+bool compararServicioCodigo(long codigoDeServicio){
+	struct servicios Servicio;
+	std::ifstream servicio("datosservicios.bin", std::ios::in | std::ios::binary);
+	servicio.read(reinterpret_cast <char*> (&Servicio), sizeof(servicios));
+	
+	while (!servicio.eof()){
+	    if (codigoDeServicio == Servicio.codigoDeServicio){
+	    	servicio.close();
+	    	return true;
+	    }
+	    servicio.read(reinterpret_cast <char*> (&Servicio), sizeof(servicios));	
+	}
+	servicio.close();
+	return false;
+}
+
+bool compararClienteCodigo(long codigoDeCliente){
+	struct cliente Cliente;
+	std::ifstream datoscliente("datoscliente.bin", std::ios::in | std::ios::binary);
+	datoscliente.read(reinterpret_cast <char*> (&Cliente), sizeof(cliente));
+	
+	while (!datoscliente.eof()){
+	    if (codigoDeCliente == Cliente.idCliente){
+	    	datoscliente.close();
+	    	return true;
+	    }
+	    datoscliente.read(reinterpret_cast <char*> (&Cliente), sizeof(cliente));	
+	}
+	datoscliente.close();
+	return false;
+}
+
+
+
+
+
+
 
 // funciones utilitarias
 void clear(){
@@ -148,31 +208,85 @@ void dias(int indice){ //esta funcion mostrara los dias de un array de 0 a 7
     switch (indice)
     {
     case 0:
-        std::cout<<"lunes\n";
+        std::cout<<"lunes";
         break;
     case 1:
-        std::cout<<"martes\n";
+        std::cout<<"martes";
         break;
     case 2:
-        std::cout<<"miercoles\n";
+        std::cout<<"miercoles";
         break;
     case 3:
-        std::cout<<"jueves\n";
+        std::cout<<"jueves";
         break;
     case 4:
-        std::cout<<"viernes\n";
+        std::cout<<"viernes";
         break;
     case 5:
-        std::cout<<"sabado\n";
+        std::cout<<"sabado";
         break;
     case 6:
-        std::cout<<"domingo\n";
+        std::cout<<"domingo";
         break;
     default:
         break;
     }
 }
 
+//una ayuda para no estar enloqueciendo
 void mostrarTiempo(struct tiempo& Tiempo) {
-    std::cout << Tiempo.hora << ":" << (Tiempo.minuto < 10 ? "0" : "") << Tiempo.minuto;
+    std::cout << Tiempo.hora << ":" << (Tiempo.minuto < 10 ? "0" : "") << Tiempo.minuto; //el operador ternario es un amor
+}
+
+//una inicializacion particularmente util
+void archivo(){
+    std::ofstream datosruta("datosruta.bin", std::ios::app | std::ios::binary);
+    if (datosruta.fail()){
+        std::cout << "\nEl archivo datosruta.bin no se pudo abrir. Cerrando programa...\n";
+        exit(0);
+    }
+    datosruta.close();
+    std::ofstream datosservicios("datosservicios.bin", std::ios::app | std::ios::binary);
+    if (datosruta.fail()){
+        std::cout << "\nEl archivo datosservicios.bin no se pudo abrir. Cerrando programa...\n";
+        exit(0);
+    }
+    datosservicios.close();
+    std::ofstream datoscliente("datoscliente.bin", std::ios::app | std::ios::binary);
+    if (datoscliente.fail()){
+        std::cout << "\nEl archivo datoscliente.bin no se pudo abrir. Cerrando programa...\n";
+        exit(0);
+    }
+    datoscliente.close();
+    std::ofstream datosviaje("datosviaje.bin", std::ios::app | std::ios::binary);
+    if (datosviaje.fail()){
+        std::cout << "\nEl archivo datosviaje.bin no se pudo abrir. Cerrando programa...\n";
+        exit(0);
+    }
+    datosviaje.close();
+    std::ofstream datosconductor("datosconductor.bin", std::ios::app | std::ios::binary);
+    if (datosconductor.fail()){
+        std::cout << "\nEl archivo datosconductor.bin no se pudo abrir. Cerrando programa...\n";
+        exit(0);
+    }
+    datosconductor.close();
+
+    std::ofstream datosvehiculo("datosvehiculo.bin", std::ios::app | std::ios::binary);
+    if (datosvehiculo.fail()){
+        std::cout << "\nEl archivo datosvehiculo.bin no se pudo abrir. Cerrando programa...\n";
+        exit(0);
+    }
+    datosvehiculo.close();
+}
+
+//devolvere un char con codigo1 primero y codigo2 despues idCliente-codigoservicio
+void generarCodigoTiquete(char codigoTiquete[128], long id, long codigo){ 
+    char codigo1[64];
+    char codigo2[64];
+    snprintf(codigo1, sizeof(codigo1), "%ld", id);
+    snprintf(codigo2, sizeof(codigo2), "%ld", codigo);
+    // convertir y triunfar
+    strcat(codigoTiquete, codigo1);
+    strcat(codigoTiquete, "-");
+    strcat(codigoTiquete, codigo2);
 }
