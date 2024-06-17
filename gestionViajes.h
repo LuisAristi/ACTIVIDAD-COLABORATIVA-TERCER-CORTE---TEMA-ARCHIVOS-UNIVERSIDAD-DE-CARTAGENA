@@ -1,372 +1,503 @@
 #include "includes.h"
 
-void registrarServicio(struct servicios Servicios[], struct ruta Ruta[]);
-void registrarRutasTuristicas(struct ruta Ruta[]);
-void registrarViaje(); // NI IDEA
-void imprimirRecorridoPorCliente();
-void imprimirRecorridoFolleto();
+void registrarServicio(struct servicios &Servicio);
+void registrarRutasTuristicas(struct ruta &Ruta);
 
-//menu de opciones, registrar ruta o registrar servicio
-void mostrarMenuRegistro(struct ruta Ruta[], struct servicios Servicios[]) {
+// menu de opciones, registrar ruta o registrar servicio
+void mostrarMenuRegistro(struct ruta Ruta, struct servicios Servicios)
+{
     int opcion;
-    do {
+    do
+    {
         std::cout << "Menu de Opciones\n";
         std::cout << "1. Registrar Ruta\n";
         std::cout << "2. Registrar Servicio\n";
         std::cout << "3. Salir\n";
         std::cout << "Seleccione una opcion: ";
-        std::cin >> opcion;
-        
-        switch(opcion) {
-            case 1:
-                registrarRutasTuristicas(Ruta);
-                break;
-            case 2:
-                registrarServicio(Servicios, Ruta);
-                break;
-            case 3:
-                std::cout << "Saliendo del programa.\n";
-                break;
-            default:
-                std::cout << "Opcion no valida. Intente de nuevo.\n";
+        opcion = ingresarNumero(opcion);
+
+        switch (opcion)
+        {
+        case 1:
+            registrarRutasTuristicas(Ruta);
+            break;
+        case 2:
+            registrarServicio(Servicios);
+            break;
+        case 3:
+            std::cout << "Saliendo del programa.\n";
+            break;
+        default:
+            std::cout << "Opcion no valida. Intente de nuevo.\n";
         }
-    } while(opcion != 3);
+    } while (opcion != 3);
 }
 
-//llamar a 01-800-915-5704
-void registrarRutasTuristicas(struct ruta Ruta[]){
-    // Implementación de la función para registrar una ruta
+// registro de rutas con binarios :)
+void registrarRutasTuristicas(struct ruta &Ruta)
+{
     int opcion;
     std::cout << "Registrando Ruta...\n";
-    // Aquí va el código para registrar una ruta                            | quiero validar que no se ingresen codigos de rutas repetidos
-    // una funcion que haga validaciones tipos de datos?                    | porque ave maria ome imaginate codigos de ruta repetidos INACEPTABLE
-    // por ejemplo de tiempo y de numero -> las principales donde puede     |
-    // haber error del usuario                                              |
-    // me gustaria que las rutas turisticas tengan nombres y codigos diferentes
-    for(int i = 0; i < 20; i++){
-        clearScreen(); 
-        std::cout<<"ingrese nombre de la ruta\n";
-        //aqui es cuando el cin.ignore salva el dia
-        clear(); std::cin.getline(Ruta[i].nombreDeRuta, 50, '\n'); //despues de ingresar cadenas PORFAVOR LIMPIAR EL BUFER
-        std::cout<<"ingrese codigo de la ruta";
-        nimodo:
-        Ruta[i].codigoDeRuta = ingresarNumero(Ruta[i].codigoDeRuta);        //decidi que todo en el programa sea long, porque yolo; de
-        if(i > 0){ //que una funcion se encargue de comparar codigoDeRuta   //int a long no problem, por eso todas las funciones
-            for(int a = 0; a<i; a++){                                                //son long, pensandolo bien, puede ser mala idea, no he dormido na me da igual
-                if(Ruta[a].codigoDeRuta == Ruta[i].codigoDeRuta){
-                    std::cout<<"por favor no ingrese codigos de ruta repetidos\n";
-                    goto nimodo;
-                }
-            }
+    do
+    {
+        Ruta = {0}; // no quiero mandar basura a mi archivo binario
+        clearScreen();
+    nimodo:
+        std::cout << "ingrese nombre de la ruta\n";
+        clear();
+        std::cin.getline(Ruta.nombreDeRuta, 50, '\n');
+        std::cout << "ingrese codigo de la ruta";
+        Ruta.codigoDeRuta = ingresarNumero(Ruta.codigoDeRuta);
+
+        if (nombreRutaComparar(Ruta.nombreDeRuta, Ruta.codigoDeRuta))
+        {
+            std::cout << "ingrese codigo de ruta o nombre de ruta unicos\n";
+            goto nimodo;
         }
-        std::cout<<"ingrese lugar de origen de ruta\n";  
-        clear(); std::cin.getline(Ruta[i].lugarDeOrigen, 50, '\n'); 
-        std::cout<<"ingrese lugar de destino de ruta\n"; 
-        clear(); std::cin.getline(Ruta[i].lugarDestino, 50, '\n');
-        std::cout<<"ingrese costo de la ruta";
-        Ruta[i].costoDeViaje = ingresarNumero(Ruta[i].costoDeViaje);
 
-        for(int j = 0; j<70; j++){
-            std::cout<<"<<lugares relevantes>>\n\n";
-            //sera que debo permitir modificacion? -> preguntar profesora
-            std::cout<<"ingrese nombre del lugar\n";
-            clear();
-            std::cin.getline(Ruta[i].DecripcionLugares[j].nombreLugar, 100);
-            
-            std::cout<<"ingrese hora prevista de llegada \n";
-            ingresarTiempo(Ruta[i].DecripcionLugares[j].previstoDeLlegada); //structs por referencia :D
-            
-            std::cout<<"ingrese hora prevista de parada\n";
-            ingresarTiempo(Ruta[i].DecripcionLugares[j].previstoDeParada);
-           
-            std::cout<<"ingrese actividad a realizar\n";
-            clear();
-            std::cin.getline(Ruta[i].DecripcionLugares[j].actividad, 100);
+        std::cout << "ingrese lugar de origen de ruta\n";
+        clear();
+        std::cin.getline(Ruta.lugarDeOrigen, 50);
+        std::cout << "ingrese lugar de destino de ruta\n";
+        std::cin.getline(Ruta.lugarDestino, 50);
+        std::cout << "ingrese costo de la ruta";
+        Ruta.costoDeViaje = ingresarNumero(Ruta.costoDeViaje);
 
-            //quiere continuar?
-            std::cout<<"quiere ingresar mas lugares?\n"; //se repite; i++
-            std::cout<<"1. si\n";
-            std::cout<<"2. no\n";
+        for (int j = 0; j < 70; j++)
+        {
+            std::cout << "<<lugares relevantes>>\n\n";
+            std::cout << "ingrese nombre del lugar\n";
+            clear();
+            std::cin.getline(Ruta.DecripcionLugares[j].nombreLugar, 100);
+
+            std::cout << "ingrese actividad a realizar\n";
+            std::cin.getline(Ruta.DecripcionLugares[j].actividad, 200);
+
+            std::cout << "ingrese hora prevista de llegada \n";
+            ingresarTiempo(Ruta.DecripcionLugares[j].previstoDeLlegada); // structs por referencia :D
+
+            std::cout << "ingrese hora prevista de parada\n";
+            ingresarTiempo(Ruta.DecripcionLugares[j].previstoDeParada);
+
+            // quiere continuar?
+            std::cout << "quiere ingresar mas lugares?\n"; // se repite; i++
+            std::cout << "1. si\n";
+            std::cout << "2. no\n";
             ingresarNumero(opcion);
-            
-            if(opcion = 2) break; // no tengo creatividad
+
+            if (opcion = 2)
+                break; // no tengo creatividad
             clearScreen();
         }
-        //quiere continuar?
-        quieres:
-        std::cout<<"quiere ingresar mas rutas?\n"; //se repite; i++
-        std::cout<<"1. si\n";
-        std::cout<<"2. no\n";
+        // escribiendo a archivo
+        std::ofstream datosruta("datosruta.bin", std::ios::app | std::ios::binary);
+        if (datosruta.fail())
+        {
+            std::cout << "\nEl archivo datosruta.bin no se pudo abrir. Cerrando programa...\n";
+            exit(0);
+        }
+        datosruta.write(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
+
+    // quiere continuar?
+    quieres:
+        std::cout << "quiere ingresar mas rutas?\n";
+        std::cout << "1. si\n";
+        std::cout << "2. no\n";
         ingresarNumero(opcion);
-        if(opcion > 2 || opcion < 1) goto quieres;
-        if(opcion = 2) break; // no tengo creatividad
-    }
+        if (opcion > 2 || opcion < 1)
+            goto quieres;
+        if (opcion = 2)
+            break;
+    } while (true);
 }
 
-/* para tener en cuenta
-struct servicios{
-    long codigoDeRuta;  
-    long codigoDeServicio; 
-    semana diasDeServicio;             
-    tiempo salida;
-    tiempo llegada;
-};
-
-struct ruta{
+void registrarServicio(struct servicios &Servicio)
+{
+    struct ruta Ruta;
     long codigoDeRuta;
-    long costoDeViaje;
-    char nombreDeRuta[50];
-    char lugarDeOrigen[50];
-    char lugarDestino[50];
-    lugares DecripcionLugares[70];
-};  
-*/
-
-void registrarServicio(struct servicios Servicios[], struct ruta Ruta[]){ //hay muchos servicios
-    // Implementación de la función para registrar un servicio
-    long codigoDeRuta; int opcionDia; int i = 0;
+    int opcionDia;
+    int i = 0;
     std::cout << "Registrando Servicio...\n";
-    // Aquí va el código para registrar un servicio
-    estoycansado:
-    std::cout<<"ingrese codigo de la ruta a la que quiere agregar un nuevo servicio";
-    codigoDeRuta = ingresarNumero(codigoDeRuta); //quiero saber si la ruta existe
-    
-    for(int i = 0; i<30; i++){
-        if(codigoDeRuta == Ruta[i].codigoDeRuta){
-            for(int h = 0; h < 90; h++){
-                Servicios[h].codigoDeRuta = codigoDeRuta; 
-                quierodormir:
-                std::cout<<"ingrese codigo del servicio";
-                Servicios[h].codigoDeServicio = ingresarNumero(Servicios[h].codigoDeServicio);
-                if(i > 0){ //que una funcion se encargue de comparar codigoDeRuta   //int a long no problem, por eso todas las funciones
-                    for(int a = 0; a<i; a++){                                                //son long, pensandolo bien, puede ser mala idea, no he dormido na me da igual
-                        if(Servicios[a].codigoDeServicio == Servicios[i].codigoDeServicio){
-                        std::cout<<"por favor no ingrese codigos de deservicio repetidos\n";
-                        goto quierodormir;
-                        }
-                    }
-                }
-                std::cout<<"ingrese dias de servicio\n";
-                for(int j=0; j<7; j++){
-                    perdonotravez:
-                    std::cout<<"desea anadir el dia ";
-                    dias(j); std::cout<<" --recuerde ingresar un valor valido :D";
-                    std::cout<<"\n1. si\n";
-                    std::cout<<"2. no\n";
-                    opcionDia = ingresarNumero(opcionDia);
-                    if(opcionDia > 2 || opcionDia < 1) goto perdonotravez;
-                    (opcionDia == 1) ? Servicios[h].diasDeServicio.dias[j] = true : Servicios[h].diasDeServicio.dias[j] = false; //si opcion == 1 entonces dias[x] true, sino
-                }
-                std::cout<<"ingrese tiempo de salida\n";
-                ingresarTiempo(Servicios[h].salida);
+// Aquí va el código para registrar un servicio
+estoycansado:
+    std::cout << "ingrese codigo de la ruta a la que quiere agregar un nuevo servicio";
+    codigoDeRuta = ingresarNumero(codigoDeRuta); // quiero saber si la ruta existe
 
-                std::cout<<"ingrese tiempo de llegada\n";
-                ingresarTiempo(Servicios[h].llegada);
+    if (compararRutaCodigo(Ruta, codigoDeRuta))
+    {
+        for (;;)
+        {
+            Servicio = {0};
+            Servicio.codigoDeRuta = codigoDeRuta;
 
-                bueno:
-                std::cout<<"quiere seguir ingresando mas servicios?\n";
-                std::cout<<"1. si\n";
-                std::cout<<"2. no\n";
+        quierodormir:
+            std::cout << "ingrese codigo del servicio";
+            Servicio.codigoDeServicio = ingresarNumero(Servicio.codigoDeServicio);
+
+            if (compararServicioCodigo(Servicio.codigoDeServicio))
+            {
+                std::cout << "por favor no ingrese codigos de deservicio repetidos\n";
+                goto quierodormir;
+            }
+
+            std::cout << "ingrese dias de servicio\n";
+            for (int j = 0; j < 7; j++)
+            {
+            perdonotravez:
+                std::cout << "desea anadir el dia ";
+                dias(j);
+                std::cout << " --recuerde ingresar un valor valido :D";
+                std::cout << "\n1. si\n";
+                std::cout << "2. no\n";
                 opcionDia = ingresarNumero(opcionDia);
-                if(opcionDia > 2 || opcionDia < 1) goto bueno;
-                if(opcionDia == 2){ break;}
+                if (opcionDia > 2 || opcionDia < 1)
+                {
+                    goto perdonotravez;
+                }
+                (opcionDia == 1) ? Servicio.diasDeServicio.dias[j] = true : Servicio.diasDeServicio.dias[j] = false; // si opcion == 1 entonces dias[x] true, sino
+            }
+            std::cout << "ingrese tiempo de salida\n";
+            ingresarTiempo(Servicio.salida);
+            std::cout << "ingrese tiempo de llegada\n";
+            ingresarTiempo(Servicio.llegada);
+
+            // escribiendo a archivo
+            std::ofstream servicio("datosservicios.bin", std::ios::app | std::ios::binary);
+            if (servicio.fail())
+            {
+                std::cout << "\nEl archivo datosservicios.bin no se pudo abrir. Cerrando programa...\n";
+                exit(0);
+            }
+            servicio.write(reinterpret_cast<char *>(&Servicio), sizeof(servicios));
+
+        // opciones
+        bueno:
+            std::cout << "quiere seguir ingresando mas servicios?\n";
+            std::cout << "1. si\n";
+            std::cout << "2. no\n";
+            opcionDia = ingresarNumero(opcionDia);
+            if (opcionDia > 2 || opcionDia < 1)
+                goto bueno;
+            if (opcionDia == 2)
+            {
+                break;
             }
         }
-        else{ std::cout<<"ingrese un codigo de ruta que exista Bv   "; goto estoycansado; }
-        
-        efectivo:
-        std::cout<<"quiere seguir ingresando mas servicios?\n";
-        std::cout<<"1. si\n";
-        std::cout<<"2. no\n";
-        opcionDia = ingresarNumero(opcionDia);
-        if(opcionDia > 2 || opcionDia < 1) goto efectivo;
-        if(opcionDia == 2) break;
+    }
+    else
+    {
+        std::cout << "ingrese un codigo de ruta que exista ";
+        goto estoycansado;
     }
 }
 
-//devolvere un char con codigo1 primero y codigo2 despues idCliente-codigoservicio
-void generarCodigoTiquete(char codigoTiquete[128], long idCliente, long codigoServicio){ 
-    char codigo1[64];
-    char codigo2[64];
-    snprintf(codigo1, sizeof(codigo1), "%ld", idCliente);
-    snprintf(codigo2, sizeof(codigo2), "%ld", codigoServicio);
-    // convertir y triunfar
-    strcat(codigoTiquete, codigo1);
-    strcat(codigoTiquete, "-");
-    strcat(codigoTiquete, codigo2);
-}
-
-/*Registrar Viaje (Debe imprimir tiquete de viaje donde figuran el código del tiquete, ID del
-cliente, nombre, el nombre de la ruta, la fecha y hora de salida, el valor (fijo para cada ruta),
-y la hora de llegada prevista.) */
-
-/*
-2. Registrar Viaje
-Debe imprimir un tiquete de viaje que incluya:
-Código del tiquete
-ID del cliente
-Nombre del cliente
-Nombre de la ruta
-Fecha y hora de salida
-Valor (fijo para cada ruta)
-Hora de llegada prevista
-*/
-
-
-void registrarViaje(struct cliente Cliente[], struct ruta Ruta[], struct servicios Servicio[]) {
+void registrarViaje()
+{
     clearScreen();
-    static int i;
     int opcion;
+    bool found;
     long codigoServicio;
-    int valorIndiceServicio;
-    int valorRuta;
+    long codigoDeCliente;
 
+    struct ruta Ruta;
+    struct viajes Viaje;
+    struct cliente Cliente;
+    struct servicios Servicio;
 
-    for(int i = 0; i < 500; i++){
-        std::cout << "Ingrese el ID del cliente: ";
-        Cliente[i].idCliente = ingresarNumero(Cliente[i].idCliente);
+    for (;;)
+    {
+        Ruta = {0};
+        Viaje = {0};
+        Cliente = {0};
+        Servicio = {0};
 
-        std::cout << "Ingrese el nombre del cliente: ";
-        clear();
-        std::cin.getline(Cliente[i].nombreCliente, 50);
+    nopuedeser0:
+        std::cout << "\nIngrese el ID del cliente: ";
+        codigoDeCliente = ingresarNumero(codigoDeCliente);
+        if (codigoDeCliente == 0)
+        {
+            std::cout << "el id de cliente no puede ser 0";
+            goto nopuedeser0;
+        }
 
-        notengocreatividad:
-        std::cout << "Ingrese el codigo del servicio: "; //de esto sacare muchas cosas, costo, nombre ruta, salida, llegada
+        // ver si el cliente ya esta en el registro
+        std::ifstream servicio("datoscliente.bin", std::ios::in | std::ios::binary);
+        servicio.read(reinterpret_cast<char *>(&Cliente), sizeof(cliente));
+        while (!servicio.eof())
+        {
+            if (codigoDeCliente == Cliente.idCliente)
+            {
+                found = true;
+                servicio.close();
+                break;
+            }
+            else
+            {
+                servicio.read(reinterpret_cast<char *>(&Cliente), sizeof(cliente));
+                found = false;
+            }
+        }
+        servicio.close();
+
+        // si no esta en el registro, ingresarlo
+        if (!found)
+        {
+            std::cout << "Ingrese el nombre del cliente: ";
+            clear();
+            std::cin.getline(Cliente.nombreCliente, 50);
+
+            std::cout << "Ingrese el telefono del cliente: ";
+            Cliente.telefonoCliente = ingresarNumero(Cliente.telefonoCliente);
+
+            Cliente.idCliente = codigoDeCliente;
+
+            std::ofstream datoscliente("datoscliente.bin", std::ios::app | std::ios::binary);
+            if (datoscliente.fail())
+            {
+                std::cout << "\nEl archivo datoscliente.bin no se pudo abrir. Cerrando programa...\n";
+                exit(0);
+            }
+            datoscliente.write(reinterpret_cast<char *>(&Cliente), sizeof(cliente));
+            datoscliente.close();
+        }
+
+    notengocreatividad:                                  // quiero un codigo de servicio que ya exista
+        std::cout << "Ingrese el codigo del servicio: "; // de esto sacare muchas cosas, costo, nombre ruta, salida, llegada
         codigoServicio = ingresarNumero(codigoServicio);
-        for(int i = 0; i<90; i++){
-            if (codigoServicio == Servicio[i].codigoDeServicio) valorIndiceServicio = i; break; 
+
+        // quiero tener el struct del servicio requerido
+        std::ifstream servicio2("datosservicios.bin", std::ios::in | std::ios::binary);
+        servicio2.read(reinterpret_cast<char *>(&Servicio), sizeof(servicios));
+
+        while (!servicio2.eof())
+        {
+            if (codigoServicio == Servicio.codigoDeServicio)
+            {
+                servicio2.close();
+                found = true;
+                break;
+            }
+            else
+            {
+                servicio2.read(reinterpret_cast<char *>(&Servicio), sizeof(servicios));
+                found = false;
+            }
+        }
+        servicio2.close();
+
+        if (!found)
+        {
+            std::cout << "ingrese un codigo de servicio valido";
+            goto notengocreatividad;
         }
 
-        valorRuta = enlaceServicioRuta(Ruta, Servicio[i].codigoDeRuta); 
-        if(valorRuta == -1) goto notengocreatividad; //ahora es bipolar
-        
-        for(int j=0; j<100; j++){ //esto seria con archivos binarios -> pendiente
-            //hay que solucionar el problema de codigoTiquete
-            generarCodigoTiquete(Cliente[i].Tiquete[i].codigoDeTiquete, Cliente[i].idCliente, Servicio[valorIndiceServicio].codigoDeServicio); 
+        // necesito el struct ruta ahora
+        std::ifstream ruta("datosruta.bin", std::ios::in | std::ios::binary);
+        ruta.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
+        while (!ruta.eof())
+        {
+            if (Servicio.codigoDeRuta == Ruta.codigoDeRuta)
+            {
+                ruta.close();
+                break;
+            }
+            else
+            {
+                ruta.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
+            }
         }
+        ruta.close();
+
+        Viaje.codigoDeRuta = Ruta.codigoDeRuta;        
+        generarCodigoTiquete(Viaje.codigoDeTiquete, Cliente.idCliente, Servicio.codigoDeServicio);
 
         std::cout << "===== Tiquete de Viaje =====" << std::endl;
-        //std::cout << "Código del tiquete: " << ticketCode << std::endl;
-        std::cout << "Codigo del tiquete: " << Cliente[i].Tiquete[i].codigoDeTiquete << std::endl;
-        std::cout << "ID del cliente: " << Cliente[i].idCliente << std::endl;
-        std::cout << "Nombre del cliente: " << Cliente[i].nombreCliente << std::endl;
-        std::cout << "Nombre de la ruta: " << Ruta[valorRuta].nombreDeRuta << std::endl;
-        std::cout << "hora de salida: " << Servicio[valorIndiceServicio].salida.hora <<":"<<Servicio[valorIndiceServicio].salida.minuto;
-        std::cout << "\nhora de llegada: " << Servicio[valorIndiceServicio].llegada.hora <<":"<<Servicio[valorIndiceServicio].llegada.minuto;
-        std::cout << "\nValor de viaje: " << Ruta[valorRuta].costoDeViaje;
-        std::cout << "\n============================" << std::endl;
-        
-        pregunta:
-        std::cout<<"quiere seguir ingresando mas servicios?\n";
-        std::cout<<"1. si\n";
-        std::cout<<"2. no\n";
-        opcion = ingresarNumero(opcion);
-        if(opcion > 2 || opcion < 1) goto pregunta;
-        if(opcion == 2) break;
+        std::cout << "Codigo del tiquete: " << Viaje.codigoDeTiquete << std::endl;
+        std::cout << "ID del cliente: " << Cliente.idCliente << std::endl;
+        std::cout << "Nombre del cliente: " << Cliente.nombreCliente << std::endl;
+        std::cout << "Nombre de la ruta: " << Ruta.nombreDeRuta << std::endl;
+        std::cout << "hora de salida: ";
+        mostrarTiempo(Servicio.salida);
+        std::cout << "\nhora de llegada: ";
+        mostrarTiempo(Servicio.llegada);
+        std::cout << "\nValor de viaje: " << Ruta.costoDeViaje;
+        std::cout << "\n============================\n";
 
-    } //quiere seguir ingresando clientes?
+        Viaje.idCliente = Cliente.idCliente;
+        Viaje.codigoDeServicio = Servicio.codigoDeServicio;
+
+        // guardar struct viajes
+        std::ofstream datosviaje("datosviaje.bin", std::ios::app | std::ios::binary);
+        if (datosviaje.fail())
+        {
+            std::cout << "\nEl archivo datosviaje.bin no se pudo abrir. Cerrando programa...\n";
+            exit(0);
+        }
+        datosviaje.write(reinterpret_cast<char *>(&Viaje), sizeof(viajes));
+
+    pregunta:
+        std::cout << "quiere seguir registrando mas viajes?\n";
+        std::cout << "1. si\n";
+        std::cout << "2. no\n";
+        opcion = ingresarNumero(opcion);
+        if (opcion > 2 || opcion < 1)
+            goto pregunta;
+        if (opcion == 2)
+            break;
+    }
 }
 
-/*
-requiero 
-Imprimir Recorrido del viaje
-1.3.1
-Por Cliente (mostrar por orden cronológico, los lugares más relevantes del
-recorrido. La descripción consiste en el nombre del lugar, la hora prevista de llegada (el
-tiempo entre dos lugares concretos es fijo para cada ruta) y además, en algunos casos, la
-actividad a realizar (comida, visita, etc.) y el tiempo de parada previsto.)
-1.3.2
-Folleto (lista de servicios diarios ofertados (hora y ruta), junto con la descripción
-de los días en que están programados.)
-*/
-
-/*
-struct cliente{
-	long idCliente; 
-    char codigoDeTiquete[128]; //char porque nadie podra cambiarlo, solo yo muajajajjajajaja
-    long codigoDeServicio[100]; // si tengo 100 codigos de servicios, 100 registros de viaje pal cliente
-	char nombreCliente[50];
-	long telefonoCliente;
-};
-*/
-
-void imprimirRecorrido(struct ruta Ruta[], struct servicios Servicio[], struct cliente Cliente[]) {
+void imprimirRecorrido()
+{
     long idTemporal;
-    int prueba;
-    int indiceCliente;
-    int rutaInfo;
+    long codigoDeRuta[50] = {0};
+    long codigoDeServicio[50] = {0};
+    int i = 0;
+    int opcion;
 
-    //ingrese id cliente
-    std::cout<<"ingrese id del cliente";  
-    ingresarNumero(idTemporal);
-    //buscar cliente
-    indiceCliente = enlaceCodigoCliente(Cliente, idTemporal);
-    
-    //tengo el indice para acceder a la info del cliente, necesito saber que ruta quiere mostrar -> hecho
-    //para eso necesito mostrar todos los servicios y de esos servicios mostrar los nombres de rutas -> hecho
-    //con sus respectivos indices, de modo que el usuario seleccionara el indice de ruta que quiere mostrar -> prendiente
+    struct ruta Ruta = {0};
+    struct viajes Viaje = {0};
+    struct cliente Cliente = {0};
+    struct servicios Servicio = {0};
 
-    std::cout<<"estas son las rutas encontradas\n\n";
+// ingrese id cliente
+dormir:
+    std::cout << "ingrese id del cliente";
+    idTemporal = ingresarNumero(idTemporal);
 
-    for(int i=0; i<100; i++){
-        if(Cliente[indiceCliente].codigoDeServicio[i] != 0){
-            prueba = enlaceServicioRuta(Ruta, Cliente[indiceCliente].codigoDeServicio[i]);
+    // buscar cliente en el archivo, como un cliente puede tener varios viajes...
+    std::ifstream datosviaje("datosviaje.bin", std::ios::in | std::ios::binary);
+    datosviaje.read(reinterpret_cast<char *>(&Viaje), sizeof(viajes));
+    while (!datosviaje.eof())
+    {
+        if (idTemporal == Viaje.idCliente)
+        {
+            codigoDeServicio[i] = Viaje.codigoDeServicio;
+            i++; // me indica la cantidad de viajes que tiene el cliente
+            datosviaje.read(reinterpret_cast<char *>(&Viaje), sizeof(viajes));
+        }
+        else
+        {
+            datosviaje.read(reinterpret_cast<char *>(&Viaje), sizeof(viajes));
+        }
+    }
+    datosviaje.close();
 
-            if(prueba>=0 || prueba<100){
-                std::cout<<prueba<<". ";
-                std::cout<<Ruta[prueba].nombreDeRuta;
+    if (i == 0)
+    {
+        std::cout << "ingrese una identificacion de cliente valida";
+        goto dormir;
+    }
+
+    i = 0;
+    // buscar los servicios que el cliente tiene en el archivo
+    std::ifstream servicio("datosservicios.bin", std::ios::in | std::ios::binary);
+    servicio.read(reinterpret_cast<char *>(&Servicio), sizeof(servicios));
+    while (!servicio.eof())
+    {
+        if (codigoDeServicio[i] == Servicio.codigoDeServicio)
+        {
+            codigoDeRuta[i] = Servicio.codigoDeRuta;
+            i++;
+        }
+        else
+        {
+            servicio.read(reinterpret_cast<char *>(&Servicio), sizeof(servicios));
+        }
+    }
+    servicio.close();
+
+    i = 0;
+    // buscar las rutas para mostrar
+    std::ifstream ruta("datosruta.bin", std::ios::in | std::ios::binary);
+    ruta.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
+    while (!ruta.eof())
+    {
+        if (codigoDeRuta[i] == Ruta.codigoDeRuta)
+        {
+        porfavor:
+            std::cout << "quiere mostar la ruta " << Ruta.nombreDeRuta << "?\n";
+            std::cout << "1. si\n";
+            std::cout << "2. no\n";
+            opcion = ingresarNumero(opcion);
+            if (opcion > 2 || opcion < 1)
+            {
+                goto porfavor;
+            }
+            if (opcion == 1)
+            {
+                for (int i = 0; i < 70; i++)
+                {
+                    if (Ruta.DecripcionLugares[i].nombreLugar[0] != '\0')
+                    {
+                        std::cout << "\n\n\nnombre de lugar: ";
+                        std::cout << Ruta.DecripcionLugares[i].nombreLugar;
+                        std::cout << "\ntiempo previsto de llegada: ";
+                        mostrarTiempo(Ruta.DecripcionLugares[i].previstoDeLlegada);
+                        std::cout << "\ntiempo previsto de parada: ";
+                        mostrarTiempo(Ruta.DecripcionLugares[i].previstoDeParada);
+                        std::cout << "\nactividad a realizar: \n";
+                        std::cout << Ruta.DecripcionLugares[i].actividad;
+                    }
+                    else
+                        break; // pues no habra info escrita en lo que sigue del array
+                }
+                break;
+            }
+            else
+            {
+                ruta.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
             }
         }
-        else break; //favor no permitir al usuario ingresar codigo de ruta = 0 -> pendiente
-    }
-    entradaMala:
-    std::cout<<"seleccione que ruta quiere mostrar: ";
-    rutaInfo =ingresarNumero(rutaInfo);
-    if(rutaInfo < 0 || rutaInfo > prueba){std::cout<<"ingrese un indice correcto\n\n"; goto entradaMala;}
-
-    /*
-    struct lugares{
-    char nombreLugar[100]; 
-    tiempo previstoDeLlegada; // quiero mostrar toda la informacion sobre los sitios de interes 
-    tiempo previstoDeParada;
-    char actividad[100];
-    };
-    */
-
-    for(int i=0; i<70; i++){
-        if(Ruta[rutaInfo].DecripcionLugares[i].nombreLugar != '\0'){
-            std::cout<<"nombre de lugar: ";
-            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].nombreLugar;
-            std::cout<<"\n\ntiempo previsto de llegada: ";
-            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeLlegada.hora<<":";
-            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeLlegada.minuto;
-            std::cout<<"\n\ntiempo previsto de parada: ";
-            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeParada.hora<<":";
-            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].previstoDeParada.minuto;
-            std::cout<<"\n\nactividad a realizar: \n";
-            std::cout<<Ruta[rutaInfo].DecripcionLugares[i].actividad;
+        else
+        {
+            ruta.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
         }
-        else break; //pues no habra info escrita en lo que sigue del array
     }
+    ruta.close();
 }
 
-/*
-1.3.2
-Folleto (lista de servicios diarios ofertados (hora y ruta), junto con la descripción
-de los días en que están programados.)
-*/
-
 // Función para imprimir la estructura servicios
-void mostrarServicios(struct servicios Servicio[]) {
-    for(int i=0; i<90; i++){
-        if(Servicio[i].codigoDeRuta != 0){
+void mostrarServicios()
+{
+    int contador = 0;
+    struct servicios Servicio[90] = {0};
+    // struct ruta Ruta[90] = {0};
+
+    // std::ifstream ruta("datosruta.bin", std::ios::in | std::ios::binary);
+    std::ifstream servicio("datosservicios.bin", std::ios::in | std::ios::binary);
+    // while (ruta.read(reinterpret_cast<char*>(&Ruta[90]), sizeof(ruta))) {
+    //     contador++;
+    //     if (contador >= 90) {
+    //         std::cout<<"Se ha alcanzado el número máximo de rutas\n";
+    //         break;
+    //     }
+    // }
+
+    contador = 0;
+    while (servicio.read(reinterpret_cast<char *>(&Servicio[contador]), sizeof(servicios)))
+    {
+        contador++;
+        if (contador >= 90)
+        {
+            std::cout << "Se ha alcanzado el número máximo de servicios\n";
+            break;
+        }
+    }
+
+    for (int i = 0; i < 90; i++)
+    {
+        if (Servicio[i].codigoDeRuta != 0)
+        {
             std::cout << "Código de Ruta: " << Servicio[i].codigoDeRuta << std::endl;
             std::cout << "Código de Servicio: " << Servicio[i].codigoDeServicio << std::endl;
             std::cout << "Días de Servicio: ";
-            for (int j = 0; j < 7; ++j) {
-                if (Servicio[i].diasDeServicio.dias[j]) {
-                    dias(i);
-                    std::cout<<", ";
+            for (int j = 0; j < 7; ++j)
+            {
+                if (Servicio[i].diasDeServicio.dias[j])
+                {
+                    dias(j);
+                    std::cout << ", ";
                 }
             }
             std::cout << std::endl;
@@ -375,8 +506,9 @@ void mostrarServicios(struct servicios Servicio[]) {
             std::cout << std::endl;
             std::cout << "Hora de Llegada: ";
             mostrarTiempo(Servicio[i].llegada);
-            std::cout <<"\n\n\n\n";
+            std::cout << "\n\n\n\n";
         }
-        else break; //todo lo que queda esta vacio
+        else
+            break; // todo lo que queda esta vacio
     }
 }
