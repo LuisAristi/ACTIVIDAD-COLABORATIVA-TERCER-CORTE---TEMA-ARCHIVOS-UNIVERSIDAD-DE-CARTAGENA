@@ -71,12 +71,23 @@ struct servicios
 
 struct ruta
 {
+    long kilometros;
     long codigoDeRuta;
     long costoDeViaje;
     char nombreDeRuta[50];
     char lugarDeOrigen[50];
     char lugarDestino[50];
     lugares DecripcionLugares[70];
+};
+
+struct Sorteo {
+    char codigo_tiquete[128];
+    long ID;
+    char apellidosnombre[50];
+    long telefono;
+    char email[128];
+    Tiempo horas_de_viaje;
+    long codigo_ruta;
 };
 
 struct viajes
@@ -92,6 +103,8 @@ struct cliente
     long idCliente;
     long telefonoCliente;
     char nombreCliente[50];
+    long horasViaje;
+    int totalHoras;
 };
 
 struct Vehiculo
@@ -129,9 +142,10 @@ struct Revision
 
 struct AsignacionDeConductores
 {
+	char nombrec[50];
     long codigoDeServicio;
     long IDConductor;
-    char placa[10];
+    char matricula[10];
 };
 
 // funciones de validaciones
@@ -149,7 +163,7 @@ malapraxi:
                      "para continuar\n";
         char c = getchar();
         clear();
-        goto malapraxi; // oficial en mi defensa, mi vida corria peligro
+        goto malapraxi;
     }
     return numero;
 }
@@ -216,25 +230,22 @@ bool nombreRutaComparar(char nombreRuta[], long codigoDeRuta)
 
 bool compararRutaCodigo(struct ruta &Ruta, long codigoDeRuta)
 {
-    std::ifstream ruta("datosruta.bin", std::ios::in | std::ios::binary);
-    ruta.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
-
-    while (!ruta.eof())
+    std::ifstream archivo("datosruta.bin", std::ios::in | std::ios::binary);
+    while (!archivo.eof())
     {
         if (codigoDeRuta == Ruta.codigoDeRuta)
         {
-            ruta.close();
+            archivo.close();
             return true;
         }
-        ruta.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
+        archivo.read(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
     }
-    ruta.close();
+    archivo.close();
     return false;
 }
 
-bool compararServicioCodigo(long codigoDeServicio)
+bool compararServicioCodigo(struct servicios &Servicio, long codigoDeServicio)
 {
-    struct servicios Servicio;
     std::ifstream servicio("datosservicios.bin", std::ios::in | std::ios::binary);
     servicio.read(reinterpret_cast<char *>(&Servicio), sizeof(servicios));
 
@@ -251,9 +262,8 @@ bool compararServicioCodigo(long codigoDeServicio)
     return false;
 }
 
-bool compararClienteCodigo(long codigoDeCliente)
+bool compararClienteCodigo(struct cliente &Cliente, long codigoDeCliente)
 {
-    struct cliente Cliente;
     std::ifstream datoscliente("datoscliente.bin",
                                std::ios::in | std::ios::binary);
     datoscliente.read(reinterpret_cast<char *>(&Cliente), sizeof(cliente));
@@ -295,7 +305,7 @@ void getAsignacionConductores(struct AsignacionDeConductores &conductorAsignado,
 // funciones utilitarias
 void clear()
 {
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore(1000);
 }
 
 void dias(int indice)
@@ -372,11 +382,11 @@ void archivo()
         exit(0);
     }
     datosviaje.close();
-    std::ofstream datosconductor("datosconductor.bin",
+    std::ofstream datosconductor("conductores.txt",
                                  std::ios::app | std::ios::binary);
     if (datosconductor.fail())
     {
-        std::cout << "\nEl archivo datosconductor.bin no se pudo abrir. Cerrando "
+        std::cout << "\nEl archivo conductores.txt no se pudo abrir. Cerrando "
                      "programa...\n";
         exit(0);
     }

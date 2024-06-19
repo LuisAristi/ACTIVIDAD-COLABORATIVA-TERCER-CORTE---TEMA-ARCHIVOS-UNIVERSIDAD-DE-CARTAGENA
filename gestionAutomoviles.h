@@ -231,7 +231,8 @@ void asignacionDeConductores()
     system("cls");
     std::cout << "Ingrese codigo del servicio: ";
     codv = ingresarNumero(codv);
-    if (!compararServicioCodigo(codv))
+    struct servicios Noutil;
+    if (!compararServicioCodigo(Noutil, codv))
     {
         std::cout << "El codigo de servicio no existe" << std::endl;
     }
@@ -254,7 +255,7 @@ void asignacionDeConductores()
                 strcpy(asignacion.placa, matv);
                 asignacion.codigoDeServicio = codv;
                 asignacion.IDConductor = idv;
-                std::cout << "Asinación completada" << std::endl;
+                std::cout << "Asignación completada" << std::endl;
                 std::ofstream archivo("asignacion.txt", std::ios::app | std::ios::binary);
                 if (archivo.fail())
                 {

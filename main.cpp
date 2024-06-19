@@ -62,6 +62,7 @@ int main()
             break;
         case 13:
             std::cout << "13";
+            consultaPorVehiculo();
             // consultaPorVehiculo();
             break;
         case 14:

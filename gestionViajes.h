@@ -47,6 +47,7 @@ void registrarRutasTuristicas(struct ruta &Ruta)
         clear();
         std::cin.getline(Ruta.nombreDeRuta, 50, '\n');
         std::cout << "ingrese codigo de la ruta";
+        clear();
         Ruta.codigoDeRuta = ingresarNumero(Ruta.codigoDeRuta);
 
         if (nombreRutaComparar(Ruta.nombreDeRuta, Ruta.codigoDeRuta))
@@ -62,6 +63,8 @@ void registrarRutasTuristicas(struct ruta &Ruta)
         std::cin.getline(Ruta.lugarDestino, 50);
         std::cout << "ingrese costo de la ruta";
         Ruta.costoDeViaje = ingresarNumero(Ruta.costoDeViaje);
+        std::cout << "\ningrese distancia en kilometros de la ruta";
+        Ruta.kilometros = ingresarNumero(Ruta.kilometros);
 
         for (int j = 0; j < 70; j++)
         {
@@ -97,6 +100,7 @@ void registrarRutasTuristicas(struct ruta &Ruta)
             exit(0);
         }
         datosruta.write(reinterpret_cast<char *>(&Ruta), sizeof(ruta));
+        datosruta.close();
 
     // quiere continuar?
     quieres:
@@ -134,7 +138,8 @@ estoycansado:
             std::cout << "ingrese codigo del servicio";
             Servicio.codigoDeServicio = ingresarNumero(Servicio.codigoDeServicio);
 
-            if (compararServicioCodigo(Servicio.codigoDeServicio))
+            struct servicios noutil;
+            if (compararServicioCodigo(noutil, Servicio.codigoDeServicio))
             {
                 std::cout << "por favor no ingrese codigos de deservicio repetidos\n";
                 goto quierodormir;
