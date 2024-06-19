@@ -25,24 +25,27 @@ void menuConsultaHora()
     std::cout << "2. Consultar por hora de llegada\n";
     std::cout << "3. Consultar un rango de hora\n";
     opcion = ingresarNumero(opcion);
-    switch (opcion)
-    {
-    case 1:
-        consultarRutasPorHoraSalida();
-        break;
-    case 2:
-        break;
-    case 3:
-        break;
-    default:
-        std::cout << "ingrese una opcion valida\n";
-    }
+    do{
+        switch (opcion)
+        {
+        case 1:
+            consultarRutasPorHoraSalida();
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default:
+            std::cout << "ingrese una opcion valida\n";
+        }
+    }while(opcion != 3);
 }
 
 void consultarRutasPorHoraSalida()
 {
     int contador;
     struct servicios Servicio[90];
+    struct ruta Ruta;
     struct Tiempo tiempo;
 
     std::ifstream servicio("datosservicios.bin", std::ios::in | std::ios::binary);
@@ -64,14 +67,109 @@ void consultarRutasPorHoraSalida()
     ingresarTiempo(tiempo);
     for (int i = 0; i < contador; i++)
     {
-        if (tiempo.hora == Servicio[i].salida.hora)
+        if (tiempo.hora == Servicio[i].salida.hora && tiempo.minuto == Servicio[i].llegada.minuto)
         {
+            compararRutaCodigo(Ruta, Servicio[i].codigoDeRuta);
+            std::cout<<"ruta "<<Ruta.nombreDeRuta<<"\n";
             std::cout << Servicio[i].codigoDeRuta << "\n";
-
-
+            std::cout<<"hora de salida: ";
+            mostrarTiempo(Servicio[i].salida);
+            std::cout<<"hora de llegada: ";
+            mostrarTiempo(Servicio[i].llegada);
         }
     }
 }
+
+void consultarRutasPorHoraLlegada()
+{
+    int contador;
+    struct servicios Servicio[90];
+    struct ruta Ruta;
+    struct Tiempo tiempo;
+
+    std::ifstream servicio("datosservicios.bin", std::ios::in | std::ios::binary);
+    contador = 0;
+    while (servicio.read(reinterpret_cast<char *>(&Servicio[contador]),
+                         sizeof(servicios)))
+    {
+        contador++;
+        if (contador >= 90)
+        {
+            std::cout << "Se ha alcanzado el número máximo de servicios\n";
+            break;
+        }
+    }
+    servicio.close();
+
+    // ahora que tenemos el array de servicios, podemos hacer lo que queramos
+    std::cout << "ingrese las horas de salida a buscar\n";
+    ingresarTiempo(tiempo);
+    for (int i = 0; i < contador; i++)
+    {
+        if (tiempo.hora == Servicio[i].llegada.hora && tiempo.minuto == Servicio[i].llegada.minuto)
+        {
+            compararRutaCodigo(Ruta, Servicio[i].codigoDeRuta);
+            std::cout<<"ruta "<<Ruta.nombreDeRuta<<"\n";
+            std::cout << Servicio[i].codigoDeRuta << "\n";
+            std::cout<<"hora de salida: ";
+            mostrarTiempo(Servicio[i].salida);
+            std::cout<<"hora de llegada: ";
+            mostrarTiempo(Servicio[i].llegada);
+        }
+    }
+}
+
+void consultarRutasPorRango()
+{
+    int contador;
+    struct servicios Servicio[90];
+    struct ruta Ruta;
+    struct Tiempo tiempo1;
+    struct Tiempo tiempo2;
+    struct Tiempo aux;
+
+    std::ifstream servicio("datosservicios.bin", std::ios::in | std::ios::binary);
+    contador = 0;
+    while (servicio.read(reinterpret_cast<char *>(&Servicio[contador]),
+                         sizeof(servicios)))
+    {
+        contador++;
+        if (contador >= 90)
+        {
+            std::cout << "Se ha alcanzado el número máximo de servicios\n";
+            break;
+        }
+    }
+    servicio.close();
+
+    // ahora que tenemos el array de servicios, podemos hacer lo que queramos
+    std::cout << "ingrese la hora a buscar\n";
+    ingresarTiempo(tiempo1);
+    std::cout<<"ingrese el rango de tiempo\n";
+    ingresarTiempo(tiempo2);
+
+    if(tiempo2.hora > tiempo1.hora){
+        aux = tiempo2;
+        tiempo2 = tiempo1;
+        tiempo1 = aux;
+    }
+
+    for (int i = 0; i < contador; i++)
+    {
+        if ((tiempo1.hora >= Servicio[i].salida.hora && tiempo1.minuto >= Servicio[i].llegada.minuto) 
+                || tiempo2.hora <= Servicio[i].salida.hora && tiempo2.minuto >= Servicio[i].llegada.minuto)
+        {
+            compararRutaCodigo(Ruta, Servicio[i].codigoDeRuta);
+            std::cout<<"ruta "<<Ruta.nombreDeRuta<<"\n";
+            std::cout << Servicio[i].codigoDeRuta << "\n";
+            std::cout<<"hora de salida: ";
+            mostrarTiempo(Servicio[i].salida);
+            std::cout<<"hora de llegada: ";
+            mostrarTiempo(Servicio[i].llegada);
+        }
+    }
+}
+
 
 void consultarRutasPorConductor()
 {
@@ -92,7 +190,7 @@ void consultarRutasPorConductor()
     while (servicio.read(reinterpret_cast<char *>(&Servicio), sizeof(servicios)))
     {
         if (conductorAsignado.codigoDeServicio == Servicio.codigoDeServicio)
-        {   
+        {
             compararRutaCodigo(Ruta, Servicio.codigoDeRuta);
             
             std::cout<<"ruta: "<<Ruta.nombreDeRuta<<"\n";
